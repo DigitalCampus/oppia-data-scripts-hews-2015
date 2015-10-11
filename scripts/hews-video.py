@@ -1,5 +1,8 @@
-import json
+
 import datetime
+import json
+import os
+
 from codecs import open
 
 def run(): 
@@ -59,7 +62,9 @@ def run():
      
     #print video_views   
 
-    out_file = open('/home/alex/temp/hew-video.html', 'w', 'utf-8')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-video.html')
+    
+    out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
     out_file.write("<head>")
