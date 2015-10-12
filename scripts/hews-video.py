@@ -61,9 +61,8 @@ def run():
             video_views.append(video_view)
      
     #print video_views   
-
-    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-video.html')
-    
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-video-' + date + '.html')
     out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
