@@ -152,7 +152,7 @@ def run():
         old_quiz = Quiz.objects.get(pk=qtu['old_quiz_id'])
         new_quiz = Quiz.objects.get(pk=qtu['new_quiz_id'])
         #Update all Tracker objects
-        '''
+        
         trackers = Tracker.objects.filter(digest=qtu['old_digest'])
         print trackers.count()
         for t in trackers:
@@ -161,8 +161,7 @@ def run():
             data_obj['quiz_id'] = qtu['new_quiz_id'] 
             t.data = json.dumps(data_obj)
             t.save()
-        '''
-         
+ 
         #Update all quiz attempts
         quiz_attempts = QuizAttempt.objects.filter(quiz__id=qtu['new_quiz_id'])
         print quiz_attempts.count()
@@ -180,7 +179,7 @@ def run():
                 print "new_question=" + new_question.title
                 qar.question = new_question
                 qar.save()
-  
+      
     
 if __name__ == "__main__":
     import django

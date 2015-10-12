@@ -1,4 +1,8 @@
+import datetime
 import json
+import os
+
+from codecs import open
 
 def run(): 
     
@@ -17,10 +21,15 @@ def run():
     pnc = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname='pnc-et').order_by('title')
     #all_courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
     
-    out_file = open('/home/alex/temp/hew-overview.html', 'w')
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-quiz-progress-' + date + '.html')
+    out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
-    out_file.write("<head><style> td {text-align:center;}</style></head>")
+    out_file.write("<head>")
+    out_file.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />')
+    out_file.write("<style> td {text-align:center;}</style>")
+    out_file.write("</head>")
     out_file.write("<body>")
     
     out_file.write("<table>")
