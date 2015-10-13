@@ -1,5 +1,8 @@
-import json
+
 import datetime
+import json
+import os
+
 from codecs import open
 
 def run(): 
@@ -14,11 +17,14 @@ def run():
     cohort_id = 23
     
     students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
-    courses = Course.objects.filter(coursecohort__cohort__pk=cohort_id)
+    courses = Course.objects.filter(coursecohort__cohort__pk=cohort_id, shortname__in=['pnc-et','anc1-et','anc2-et'])
     
     quiz_acts = Activity.objects.filter(section__course__=courses, type=Activity.QUIZ).values_list('digest',flat=True)
     
-    out_file = open('/home/alex/temp/hew-short-answers.html', 'w', 'utf-8')
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-short-answers-' + date + '.html')
+    out_file = open(output_file, 'w', 'utf-8')
+    
     out_file.write("<html>")
     out_file.write("<head>")
     out_file.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />')
@@ -28,8 +34,10 @@ def run():
     out_file.write("<table>")
     out_file.write("<tr>")
     out_file.write("<th>Question</th>")
+    out_file.write("<th>QARID</th>")
     out_file.write("<th>Responses</th>")
     out_file.write("<th>Score</th>")
+    out_file.write("<th>Revised Score</th>")
     out_file.write("</tr>")
     
     quizzes = Quiz.objects.filter(quizprops__value__in=quiz_acts, quizprops__name="digest")
@@ -38,28 +46,30 @@ def run():
         for sa_question in sa_questions:
             print title_lang(sa_question.title,'en')
             out_file.write("<tr>")
-            out_file.write("<td>%s</td><td></td><td></td>" % title_lang(sa_question.title,"en"))
+            out_file.write("<td colspan='5'>%s</td>" % title_lang(sa_question.title,"en"))
             out_file.write("</tr>")
             
             sa_responses = Response.objects.filter(question=sa_question)
             
             out_file.write("<tr>")
-            out_file.write("<td>Correct responses:")
+            out_file.write("<td colspan='5'>Correct responses:")
             out_file.write("<ul>")
             for sa_response in sa_responses:
                 out_file.write("<li>%s (%d)</li>" % (sa_response.title, sa_response.score))
             out_file.write("</ul>")
-            out_file.write("</td><td></td><td></td>")
             out_file.write("</tr>")
     
             user_responses = QuizAttemptResponse.objects.filter(quizattempt__user__in=students, question=sa_question)
             for ur in user_responses:
-                out_file.write("<tr>")
-                out_file.write("<td>&nbsp;</td>")
-                print ur.text
-                out_file.write("<td>" + ur.text + "</td>")
-                out_file.write("<td>%s</td>" % ur.score)
-                out_file.write("</tr>")
+                if ur.score == 0:
+                    out_file.write("<tr>")
+                    out_file.write("<td>&nbsp;</td>")
+                    print ur.text
+                    out_file.write("<td>%d</td>" % ur.id)
+                    out_file.write("<td>" + ur.text + "</td>")
+                    out_file.write("<td>%s</td>" % ur.score)
+                    out_file.write("<td>&nbsp;</td>")
+                    out_file.write("</tr>")
     
     out_file.write("</table>")   
     out_file.write("</body></html>")
