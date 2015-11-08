@@ -1,4 +1,9 @@
 import json
+import datetime
+import os
+
+
+from codecs import open
 
 def run(): 
     
@@ -9,13 +14,15 @@ def run():
     from oppia.models import Activity, Course, Cohort, CourseCohort, Participant
     from oppia.quiz.models import Quiz, QuizQuestion, QuizAttempt, QuizAttemptResponse
     
-    PASS_THRESHOLD = 50 
+    PASS_THRESHOLD = 50
     cohort_id = 23
     
     students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
     courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
     
-    out_file = open('/home/alex/temp/hew-detail-%d-percent.html' % (PASS_THRESHOLD), 'w')
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-detail-' + str(PASS_THRESHOLD) + '-percent-'+ date +'.html' )
+    out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
     out_file.write("<head></head>")
@@ -25,7 +32,7 @@ def run():
     out_file.write("<tr>")
     out_file.write("<th>Student</th>")
     out_file.write("<th>Course/Quiz</th>")
-    out_file.write("<th>No Attempts</th>")
+    out_file.write("<th>No Attempts</th>") 
     out_file.write("<th>Max Score (%)</th>")
     out_file.write("<th>Min Score (%)</th>")
     out_file.write("<th>Avg Score (%)</th>")

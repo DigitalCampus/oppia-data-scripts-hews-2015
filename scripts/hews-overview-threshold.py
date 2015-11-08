@@ -1,4 +1,8 @@
 import json
+import datetime
+import os
+
+from codecs import open
 
 def run(): 
     
@@ -15,7 +19,9 @@ def run():
     students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
     courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
     
-    out_file = open('/home/alex/temp/hew-overview-%d-percent.html' % (PASS_THRESHOLD), 'w')
+    date = datetime.datetime.now().strftime('%Y-%m-%d')
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-overview-%d-percent-%s.html' % (PASS_THRESHOLD,date))
+    out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
     out_file.write("<head></head>")
