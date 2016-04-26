@@ -1,3 +1,9 @@
+'''
+Calculates the number of weeks during a time period when the users had activity
+
+'''
+
+
 import json
 import datetime
 import os
@@ -15,7 +21,7 @@ def run():
     
     cohort_id = 23
     course_start_date = datetime.datetime(2015,05,1,0,0,0)
-    course_weeks = 27 # to 9 Nov 2015
+    course_weeks = 13
     
     students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
     courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
