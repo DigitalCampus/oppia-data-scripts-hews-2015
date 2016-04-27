@@ -21,7 +21,7 @@ def run():
     COHORT_ID = 23
     START_DATE = datetime.datetime(2015,5,01,0,0,0)
     print START_DATE
-    END_DATE = datetime.datetime(2016,03,31,23,59,59)
+    END_DATE = datetime.datetime(2015,07,31,23,59,59)
     print END_DATE
     
     students = User.objects.filter(participant__cohort_id=COHORT_ID, participant__role=Participant.STUDENT).order_by('username')
