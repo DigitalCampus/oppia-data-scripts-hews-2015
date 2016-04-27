@@ -24,7 +24,10 @@ def run():
     out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
-    out_file.write("<head></head>")
+    out_file.write("<head>")
+    out_file.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />')
+    out_file.write("<style> td {text-align:center;} #footer { font-size:small; font-style:italic; } </style>")
+    out_file.write("</head>")
     out_file.write("<body>")
     
     out_file.write("<h3>Quiz pass threshold set at: %d%%</h3>" % PASS_THRESHOLD)
@@ -70,7 +73,8 @@ def run():
         out_file.write("<td>%d</td>" % no_passed)   
         out_file.write("</tr>\n")        
             
-    out_file.write("</table>")   
+    out_file.write("</table>")  
+    out_file.write("<div id='footer'>Report generated at %s by script %s</div>" % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),os.path.realpath(__file__))) 
     out_file.write("</body></html>")
     out_file.close()
    

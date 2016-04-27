@@ -28,7 +28,7 @@ def run():
     out_file.write("<html>")
     out_file.write("<head>")
     out_file.write('<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />')
-    out_file.write("<style> td {text-align:center;}</style>")
+    out_file.write("<style> td {text-align:center;} #footer { font-size:small; font-style:italic; } </style>")
     out_file.write("</head>")
     out_file.write("<body>")
     
@@ -147,7 +147,8 @@ def run():
         # overall for all courses
         
             
-    out_file.write("</table>")   
+    out_file.write("</table>")
+    out_file.write("<div id='footer'>Report generated at %s by script %s</div>" % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),os.path.realpath(__file__)))   
     out_file.write("</body></html>")
     out_file.close()
    
