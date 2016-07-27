@@ -17,13 +17,14 @@ def run():
     from oppia.models import Activity, Course, Cohort, CourseCohort, Participant, Tracker, Points
 
     COHORT_ID = 23
-    START_DATE = datetime.datetime(2015,5,01,0,0,0)
+    START_DATE = datetime.datetime(2015,8,01,0,0,0)
     print START_DATE
-    END_DATE = datetime.datetime(2016,3,31,23,59,59)
+    END_DATE = datetime.datetime(2016,5,31,23,59,59)
     print END_DATE
     
     students = User.objects.filter(participant__cohort_id=COHORT_ID, participant__role=Participant.STUDENT).order_by('username')
-    courses = Course.objects.filter(coursecohort__cohort_id = COHORT_ID, shortname__in=['anc1-et','anc2-et','pnc-et'])
+    #courses = Course.objects.filter(coursecohort__cohort_id = COHORT_ID, shortname__in=['anc1-et','anc2-et','pnc-et'])
+    courses = Course.objects.filter(coursecohort__cohort_id = COHORT_ID)
     
     date = datetime.datetime.now().strftime('%Y-%m-%d')
     output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-activity-points-for-period-' + date + '.html')
@@ -35,8 +36,8 @@ def run():
     out_file.write("<style> td {text-align:center;} #footer { font-size:small; font-style:italic; } </style>")
     out_file.write("</head>")
     out_file.write("<body>")
-    out_file.write("<h2> Activity, quiz, media and points for %s to %s</h2>" % (START_DATE, END_DATE))
-    
+    out_file.write("<h2>Activity, quiz, media and points for %s to %s</h2>" % (START_DATE, END_DATE))
+    out_file.write("<h3>Courses: %s</h3>" % courses.values_list('shortname', flat=True))
     out_file.write("<table>")
     
     out_file.write("<tr>")
