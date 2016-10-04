@@ -14,10 +14,16 @@ def run():
     from oppia.quiz.models import Quiz, QuizQuestion, QuizAttempt, QuizAttemptResponse
     
     PASS_THRESHOLD = 80 
-    cohort_id = 23
     
-    students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
-    courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
+    START_DATE = datetime.datetime(2015,8,01,0,0,0)
+    print START_DATE
+    END_DATE = datetime.datetime(2016,8,31,23,59,59)
+    print END_DATE
+    
+    COHORT_ID = 23
+    
+    students = User.objects.filter(participant__cohort_id=COHORT_ID, participant__role=Participant.STUDENT).order_by('username')
+    courses = Course.objects.filter(coursecohort__cohort_id = COHORT_ID, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
     
     date = datetime.datetime.now().strftime('%Y-%m-%d')
     output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-quiz-progress-%d-percent-%s.html' % (PASS_THRESHOLD,date))
