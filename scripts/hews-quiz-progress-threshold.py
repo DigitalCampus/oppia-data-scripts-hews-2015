@@ -1,10 +1,13 @@
+
+import argparse
 import json
 import datetime
 import os
+import sys
 
 from codecs import open
 
-def run(): 
+def run(cohort_id, threshold, period, course_range): 
     
     from django.contrib.auth.models import User
     from django.db.models import Sum, Max, Min, Avg
@@ -13,20 +16,40 @@ def run():
     from oppia.models import Activity, Course, Cohort, CourseCohort, Participant, Tracker
     from oppia.quiz.models import Quiz, QuizQuestion, QuizAttempt, QuizAttemptResponse
     
-    PASS_THRESHOLD = 80 
+    print "Cohort:"  + str(cohort_id)
+    print "Threshold: " + str (threshold)
+    print "Period: " + period
+    print "Course Range: " + course_range
     
-    START_DATE = datetime.datetime(2015,8,01,0,0,0)
-    print START_DATE
-    END_DATE = datetime.datetime(2016,8,31,23,59,59)
-    print END_DATE
+    if period == 'project': 
+        START_DATE = datetime.datetime(2015,4,01,0,0,0)
+        END_DATE = datetime.datetime(2016,10,31,23,59,59)
+    elif period == 'training':
+        START_DATE = datetime.datetime(2015,4,01,0,0,0)
+        END_DATE = datetime.datetime(2015,7,31,23,59,59)
+    elif period == 'cpd':
+        START_DATE = datetime.datetime(2015,8,01,0,0,0)
+        END_DATE = datetime.datetime(2016,10,31,23,59,59)
+    else:
+        print "Invalid period supplied"
+        sys.exit() 
     
-    COHORT_ID = 23
     
-    students = User.objects.filter(participant__cohort_id=COHORT_ID, participant__role=Participant.STUDENT).order_by('username')
-    courses = Course.objects.filter(coursecohort__cohort_id = COHORT_ID, shortname__in=['anc1-et','anc2-et','pnc-et']).order_by('title')
+    students = User.objects.filter(participant__cohort_id=cohort_id, participant__role=Participant.STUDENT).order_by('username')
+    if course_range == 'ancpnc': 
+        courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et','pnc-et'])
+    elif course_range == 'anc': 
+        courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['anc1-et','anc2-et'])
+    elif course_range == 'pnc': 
+        courses = Course.objects.filter(coursecohort__cohort_id = cohort_id, shortname__in=['pnc-et'])
+    elif course_range =='all': 
+        courses = Course.objects.filter(coursecohort__cohort_id = cohort_id)
+    else:
+        print "Invalid course range supplied"
+        sys.exit()
     
-    date = datetime.datetime.now().strftime('%Y-%m-%d')
-    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', 'hew-quiz-progress-%d-percent-%s.html' % (PASS_THRESHOLD,date))
+    filename = 'hew-quiz-progress-' + period + '-' + course_range + '-' + str(threshold) + '.html'
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '_output', filename)
     out_file = open(output_file, 'w', 'utf-8')
     
     out_file.write("<html>")
@@ -36,7 +59,9 @@ def run():
     out_file.write("</head>")
     out_file.write("<body>")
     
-    out_file.write("<h3>Quiz pass threshold set at: %d%%</h3>" % PASS_THRESHOLD)
+    out_file.write("<h3>Courses: %s</h3>" % ','.join(courses.values_list('shortname', flat=True)))
+    out_file.write("<h3>Quiz pass threshold set at: %d%%</h3>" % threshold)
+    out_file.write("<h3>Date range: %s to %s</h3>" % (START_DATE.strftime('%d-%b-%Y'), END_DATE.strftime('%d-%b-%Y')))
     out_file.write("<table>")
     out_file.write("<tr>")
     out_file.write("<th>Student</th>")
@@ -71,7 +96,7 @@ def run():
                 if qas['user_max_score'] is not None:
                     no_attempted += 1
                     
-                    if qas['user_max_score'] * 100/ qas['max_score'] >= PASS_THRESHOLD:
+                    if qas['user_max_score'] * 100/ qas['max_score'] >= threshold:
                         no_passed += 1
 
         out_file.write("<td>%d</td>" % no_quizzes) 
@@ -99,4 +124,10 @@ def title_lang(title,lang):
 if __name__ == "__main__":
     import django
     django.setup()
-    run() 
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--cohort_id", help="", type=int)
+    parser.add_argument("--threshold", help="", type=int)
+    parser.add_argument("--period", help="", choices=['project','training','cpd'])
+    parser.add_argument("--course_range", help="", choices=['all','ancpnc','anc', 'pnc'])
+    args = parser.parse_args()
+    run(args.cohort_id, args.threshold, args.period, args.course_range)  
