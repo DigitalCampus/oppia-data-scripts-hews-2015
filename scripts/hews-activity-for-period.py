@@ -26,13 +26,13 @@ def run(cohort_id, threshold, period, course_range):
     
     if period == 'project': 
         START_DATE = datetime.datetime(2015,4,01,0,0,0)
-        END_DATE = datetime.datetime(2016,9,30,23,59,59)
+        END_DATE = datetime.datetime(2016,10,31,23,59,59)
     elif period == 'training':
         START_DATE = datetime.datetime(2015,4,01,0,0,0)
         END_DATE = datetime.datetime(2015,7,31,23,59,59)
     elif period == 'cpd':
         START_DATE = datetime.datetime(2015,8,01,0,0,0)
-        END_DATE = datetime.datetime(2016,9,30,23,59,59)
+        END_DATE = datetime.datetime(2016,10,31,23,59,59)
     else:
         print "Invalid period supplied"
         sys.exit() 
