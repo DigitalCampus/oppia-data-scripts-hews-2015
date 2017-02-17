@@ -30,6 +30,9 @@ def run(cohort_id, threshold, period, course_range):
     elif period == 'cpd':
         START_DATE = datetime.datetime(2015,8,01,0,0,0)
         END_DATE = datetime.datetime(2016,10,31,23,59,59)
+    elif period == 'op3.4-mar16':
+        START_DATE = datetime.datetime(2015,8,01,0,0,0)
+        END_DATE = datetime.datetime(2016,03,31,23,59,59)
     else:
         print "Invalid period supplied"
         sys.exit() 
@@ -127,7 +130,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--cohort_id", help="", type=int)
     parser.add_argument("--threshold", help="", type=int)
-    parser.add_argument("--period", help="", choices=['project','training','cpd'])
+    parser.add_argument("--period", help="", choices=['project','training','cpd','op3.4-mar16'])
     parser.add_argument("--course_range", help="", choices=['all','ancpnc','anc', 'pnc'])
     args = parser.parse_args()
     run(args.cohort_id, args.threshold, args.period, args.course_range)  
